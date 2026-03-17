@@ -1,0 +1,19 @@
+[MASTER]
+init-hook='import os, sys; sys.path.insert(0, os.getcwd())'
+ignore=emojipy
+
+disable=
+    R0801, # Too few public methods
+    R0901, # Too many entities in file
+    R0903, # Too few public methods
+    E1101, # Dynamic attributes
+    E1102, # not-callable
+    E1123, # Unexpected keyword argument
+    C0103, # Pylint doesn't like id attribute
+    C0114, # Missing module docstring
+    C0115, # Class docstring
+    C0116, # Method docstring
+    W0107, # Unnecessary pass statement
+    W0201, # Attribute defined outside init method
+    W0223, # Methods 'create' and 'update' is abstract in class 'BaseSerializer' but is not overridden in child class
+    W0511, # Used when a warning note

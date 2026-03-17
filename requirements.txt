@@ -1,0 +1,2 @@
+SQLAlchemy==2.0.48
+pylint==4.0.5
