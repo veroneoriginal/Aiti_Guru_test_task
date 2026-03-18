@@ -1,22 +1,27 @@
 # app/models/order.py
 
 import uuid
-from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Numeric, String, func
+from sqlalchemy import Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, OrderStatus, PaymentOperation, PaymentStatus
+from app.models.base import (
+    Base,
+    OrderStatus,
+    PaymentOperation,
+    PaymentStatus,
+    TimestampMixin,
+)
 
 # спасает от циклической зависимости между взаимосвязанными моделями.
 if TYPE_CHECKING:
     from app.models.payment import Payment
 
 
-class Order(Base):
+class Order(TimestampMixin, Base):
     __tablename__ = "orders"
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -33,18 +38,7 @@ class Order(Base):
         String(20),
         nullable=False,
         default=OrderStatus.UNPAID,
-        comment="Статус оплаты: unpaid / partial / paid",
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False,
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False,
+        comment="Статус оплаты: не оплачен / частично оплачен / оплачен",
     )
 
     payments: Mapped[list["Payment"]] = relationship(
@@ -52,7 +46,6 @@ class Order(Base):
         back_populates="order",
         lazy="selectin",
     )
-
 
     # ------------------------------------------------------------------
     # Бизнес-логика пересчёта статуса

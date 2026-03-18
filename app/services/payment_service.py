@@ -6,12 +6,14 @@ from decimal import Decimal  # для типизации суммы платеж
 from sqlalchemy import select  # построение SELECT-запроса
 from sqlalchemy.ext.asyncio import AsyncSession  # тип сессии БД
 
-from app.core.exceptions import (OrderAlreadyPaidError, OverpaymentError,
-                                 PaymentNotFoundError,
-                                 RefundExceedsDepositError)
+from app.core.exceptions import (
+    OrderAlreadyPaidError,
+    OverpaymentError,
+    PaymentNotFoundError,
+    RefundExceedsDepositError,
+)
 from app.infrastructure.bank.client import bank_client
-from app.models.base import (OrderStatus, PaymentOperation, PaymentStatus,
-                             PaymentType)
+from app.models.base import OrderStatus, PaymentOperation, PaymentStatus, PaymentType
 from app.models.payment import Payment
 from app.services.order_service import get_order
 
@@ -141,8 +143,20 @@ async def refund(
     session.add(refund_payment)
     await session.flush()
 
-    # Завершение — возврат не требует подтверждения
-    refund_payment.mark_completed()
+    # --- Разделение логики по типу платежа ---
+
+    if original_payment.type == PaymentType.CASH:
+        # Наличные: возврат не требует подтверждения
+        refund_payment.mark_completed()
+
+    elif original_payment.type == PaymentType.ACQUIRING:
+        # Эквайринг: отправка запроса на возврат в банк
+        bank_payment_id = await bank_client.acquiring_start(
+            order_id=str(original_payment.order_id),
+            amount=str(amount),
+        )
+        refund_payment.bank_payment_id = bank_payment_id
+        # Статус остаётся pending — подтверждение придёт через sync_payment_with_bank
 
     session.add(refund_payment)
     await session.commit()

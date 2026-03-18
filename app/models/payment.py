@@ -4,19 +4,30 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import (CheckConstraint, DateTime, ForeignKey, Numeric, String,
-                        func)
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    ForeignKey,
+    Numeric,
+    String,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, PaymentOperation, PaymentStatus, PaymentType
+from app.models.base import (
+    Base,
+    PaymentOperation,
+    PaymentStatus,
+    PaymentType,
+    TimestampMixin,
+)
 
 # спасает от циклической зависимости между взаимосвязанными моделями.
 if TYPE_CHECKING:
     from app.models.order import Order
 
 
-class Payment(Base):
+class Payment(TimestampMixin, Base):
     """
     Единая таблица для платежей всех типов (Single Table).
 
@@ -57,24 +68,13 @@ class Payment(Base):
     amount: Mapped[Decimal] = mapped_column(
         Numeric(12, 2),
         nullable=False,
-        comment="Сумма платежа (всегда положительная)",
+        comment="Сумма платежа",
     )
     status: Mapped[PaymentStatus] = mapped_column(
         String(20),
         nullable=False,
         default=PaymentStatus.PENDING,
         comment="Статус: не оплачен / частично оплачен / оплачен",
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        nullable=False,
-    )
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=False,
     )
 
     # ------------------------------------------------------------------

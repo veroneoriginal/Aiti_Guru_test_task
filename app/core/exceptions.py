@@ -1,4 +1,4 @@
-# core/exceptions.py
+# app/core/exceptions.py
 
 import uuid
 from decimal import Decimal

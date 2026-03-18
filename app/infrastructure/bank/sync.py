@@ -1,5 +1,5 @@
 # app/infrastructure/bank/sync.py
-# Этот модуль — связующее звено между банком и нашей БД.
+# Этот модуль — связующее звено между банком и БД.
 # Он не знает ни про HTTP, ни про бизнес-логику — просто координирует
 from sqlalchemy.ext.asyncio import AsyncSession
 
