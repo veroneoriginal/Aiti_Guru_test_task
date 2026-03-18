@@ -30,7 +30,7 @@ class OrderAlreadyPaidError(AppError):
     Заказ уже полностью оплачен — новый платёж невозможен.
 
     Атрибуты:
-    order_id: ID заказа, который уже в статусе paid
+        order_id: ID заказа, который уже в статусе paid
     """
 
     def __init__(self, order_id: uuid.UUID):
@@ -70,6 +70,13 @@ class OverpaymentError(AppError):
 
 
 class RefundExceedsDepositError(AppError):
+    """
+    Сумма возврата превышает оплаченную сумму по заказу.
+
+    Атрибуты:
+        available: сколько можно вернуть (фактически оплачено)
+        requested: какую сумму возврата запросил пользователь
+    """
     def __init__(self, available: Decimal, requested: Decimal):
         self.available = available
         self.requested = requested

@@ -61,7 +61,7 @@ class Order(Base):
         """
         Пересчитывает статус на основе завершённых платежей.
         """
-        paid_total = self._paid_total()
+        paid_total = self.paid_total()
 
         if paid_total <= 0:
             self.status = OrderStatus.UNPAID
@@ -70,7 +70,7 @@ class Order(Base):
         else:
             self.status = OrderStatus.PARTIAL
 
-    def _paid_total(self) -> Decimal:
+    def paid_total(self) -> Decimal:
         """
         Сумма всех завершённых депозитов минус возвраты.
         """
@@ -89,7 +89,7 @@ class Order(Base):
         """
         Сколько ещё можно заплатить по заказу.
         """
-        return self.amount - self._paid_total()
+        return self.amount - self.paid_total()
 
     def __repr__(self) -> str:
         return f"<Order id={self.id} amount={self.amount} status={self.status}>"
