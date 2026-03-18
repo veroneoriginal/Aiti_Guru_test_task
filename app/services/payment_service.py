@@ -6,20 +6,13 @@ from decimal import Decimal  # для типизации суммы платеж
 from sqlalchemy import select  # построение SELECT-запроса
 from sqlalchemy.ext.asyncio import AsyncSession  # тип сессии БД
 
-from app.core.exceptions import (
-    OrderAlreadyPaidError,
-    OverpaymentError,
-    RefundExceedsDepositError,
-    PaymentNotFoundError,
-)
+from app.core.exceptions import (OrderAlreadyPaidError, OverpaymentError,
+                                 PaymentNotFoundError,
+                                 RefundExceedsDepositError)
 from app.infrastructure.bank.client import bank_client
+from app.models.base import (OrderStatus, PaymentOperation, PaymentStatus,
+                             PaymentType)
 from app.models.payment import Payment
-from app.models.base import (
-    PaymentType,
-    PaymentOperation,
-    PaymentStatus,
-    OrderStatus,
-)
 from app.services.order_service import get_order
 
 

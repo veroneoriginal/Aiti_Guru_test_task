@@ -14,10 +14,6 @@ payment.py — модель + хелперы (mark_completed, sync_from_bank)
 ✅ core/config.py — настройки (DATABASE_URL, BANK_API_URL и т.д.)
 ✅ core/exceptions.py — кастомные исключения (OrderNotFound, PaymentError, OverpaymentError...)
 ✅ infrastructure/db/session.py — AsyncSession, get_db()
-
-
-🔧 Что нужно реализовать (по порядку)
-
 ✅ infrastructure/bank/client.py — BankClient с методами acquiring_start() и acquiring_check()
 ✅ infrastructure/bank/sync.py — sync_payment_with_bank()
 
@@ -28,10 +24,14 @@ payment.py — модель + хелперы (mark_completed, sync_from_bank)
 
 3. API слой
 
-api/schemas/order.py — OrderResponse
-api/schemas/payment.py — PaymentCreateRequest, PaymentResponse
-api/routers/orders.py — GET /orders/{id}
-api/routers/payments.py — POST /payments, POST /payments/{id}/refund
+✅ api/schemas/order.py — OrderResponse
+✅ api/schemas/payment.py — PaymentCreateRequest, PaymentResponse
+
+🔧 Что нужно реализовать (по порядку)
+
+✅ api/routers/orders.py — GET /orders/{id}
+✅ api/routers/payments.py — POST /payments, POST /payments/{id}/refund
+
 api/exceptions/handlers.py — обработчики ошибок
 main.py — сборка приложения FastAPI
 

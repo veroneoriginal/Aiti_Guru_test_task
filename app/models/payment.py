@@ -1,14 +1,15 @@
 # app/models/payment.py
 import uuid
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import Numeric, String, DateTime, ForeignKey, func, CheckConstraint
+from sqlalchemy import (CheckConstraint, DateTime, ForeignKey, Numeric, String,
+                        func)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import Base, PaymentType, PaymentOperation, PaymentStatus
+from app.models.base import Base, PaymentOperation, PaymentStatus, PaymentType
 
 # спасает от циклической зависимости между взаимосвязанными моделями.
 if TYPE_CHECKING:

@@ -1,8 +1,8 @@
 # app/models/base.py
 
 import enum
-from sqlalchemy.orm import DeclarativeBase
 
+from sqlalchemy.orm import DeclarativeBase
 
 
 class Base(DeclarativeBase):

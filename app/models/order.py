@@ -1,13 +1,14 @@
 # app/models/order.py
 
 import uuid
-from decimal import Decimal
 from datetime import datetime
+from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Numeric, String, DateTime, func
+from sqlalchemy import DateTime, Numeric, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base, OrderStatus, PaymentOperation, PaymentStatus
 
 # спасает от циклической зависимости между взаимосвязанными моделями.

@@ -3,10 +3,7 @@
 import httpx
 
 from app.core.config import settings
-from app.core.exceptions import (
-    BankUnavailableError,
-    BankPaymentNotFoundError,
-)
+from app.core.exceptions import BankPaymentNotFoundError, BankUnavailableError
 
 
 class BankClient:

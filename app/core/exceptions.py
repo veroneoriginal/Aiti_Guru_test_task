@@ -1,7 +1,7 @@
 # core/exceptions.py
 
-from decimal import Decimal
 import uuid
+from decimal import Decimal
 
 
 class AppError(Exception):
