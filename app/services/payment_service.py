@@ -61,7 +61,7 @@ async def deposit(
 
     # Создание объекта платежа в памяти
     payment = Payment(
-        order_id=order_id,  # привязка к заказу
+        order=order,  # привязка к заказу
         type=payment_type,  # наличные или эквайринг
         operation=PaymentOperation.DEPOSIT,  # депозит
         amount=amount,  # сумма
@@ -128,20 +128,24 @@ async def refund(
             Payment.parent_payment_id == payment_id,
             Payment.operation == PaymentOperation.REFUND,
             Payment.status == PaymentStatus.COMPLETED,
-            )
+        )
     )
-    refunded_payments = refunded_result.scalars().all() # [Payment(200₽), Payment(50₽)] / [].
+    refunded_payments = refunded_result.scalars().all()  # [Payment(200₽), Payment(50₽)] / [].
     already_refunded = sum(p.amount for p in refunded_payments) \
         if refunded_payments else Decimal("0")
 
     # 5. Не возвращаем больше, чем оплачено по этому платежу
     available_for_refund = original_payment.amount - already_refunded
     if amount > available_for_refund:
-        raise RefundExceedsDepositError(available=available_for_refund, requested=amount)
+        raise RefundExceedsDepositError(
+            available=available_for_refund,
+            requested=amount,
+        )
 
     # 6. Создаём возврат с привязкой к депозиту
+    order = await get_order(original_payment.order_id, session)
     refund_payment = Payment(
-        order_id=original_payment.order_id,
+        order=order,
         type=original_payment.type,
         operation=PaymentOperation.REFUND,
         amount=amount,
@@ -162,7 +166,6 @@ async def refund(
         refund_payment.bank_payment_id = bank_payment_id
 
     session.add(refund_payment)
-    order = await get_order(original_payment.order_id, session)
     session.add(order)
     await session.commit()
     await session.refresh(refund_payment)

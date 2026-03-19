@@ -1,3 +1,4 @@
+# tests/conftest.py
 import uuid
 from decimal import Decimal
 
