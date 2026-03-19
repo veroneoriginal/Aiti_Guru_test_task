@@ -3,7 +3,10 @@
 import httpx
 
 from app.core.config import settings
-from app.core.exceptions import BankPaymentNotFoundError, BankUnavailableError
+from app.core.exceptions import (
+    BankPaymentNotFoundError,
+    BankUnavailableError,
+)
 
 
 class BankClient:
@@ -36,30 +39,35 @@ class BankClient:
         Исключения:
             BankUnavailableError: банк недоступен или вернул неожиданный ответ
         """
+        # Данные для отправки {"order_id": "abc-123", "amount": "500.00"}
         payload = {
             "order_id": order_id,
             "amount": amount,
         }
 
+        # Отправка запроса в банк
         try:
             async with httpx.AsyncClient(timeout=self._timeout) as client:
                 response = await client.post(
                     f"{self._base_url}/acquiring_start",
                     json=payload,
                 )
-        except httpx.TimeoutException as exc:
-            raise BankUnavailableError() from exc
         except httpx.RequestError as exc:
             raise BankUnavailableError() from exc
 
+        # Банк ответил, но вернул ошибку — значит что-то не так на его стороне.
         if response.status_code != 200:
             raise BankUnavailableError()
 
+        # Парсинг ответа
         data = response.json()
 
+        # если в теле JSON есть поле "error" — значит банк отказал по какой-то причине
         if "error" in data:
             raise BankUnavailableError()
 
+        # ID сохранится в payment.bank_payment_id и будет использоваться
+        # для проверки статуса через acquiring_check.
         return data["bank_payment_id"]
 
     async def acquiring_check(
@@ -89,8 +97,6 @@ class BankClient:
                     f"{self._base_url}/acquiring_check",
                     json=payload,
                 )
-        except httpx.TimeoutException as exc:
-            raise BankUnavailableError() from exc
         except httpx.RequestError as exc:
             raise BankUnavailableError() from exc
 

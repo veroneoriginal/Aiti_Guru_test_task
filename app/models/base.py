@@ -38,7 +38,7 @@ class OrderStatus(str, enum.Enum):
 
 class PaymentType(str, enum.Enum):
     CASH = "cash"  # наличные
-    ACQUIRING = "acquiring"  # экваринг
+    ACQUIRING = "acquiring"  # эквайринг
 
 
 class PaymentOperation(str, enum.Enum):
@@ -47,6 +47,6 @@ class PaymentOperation(str, enum.Enum):
 
 
 class PaymentStatus(str, enum.Enum):
-    PENDING = "pending"  # создан, ожидаем подтверждения (актуально для эквайринга)
+    PENDING = "pending"  # создан, ожидает подтверждения (актуально для эквайринга)
     COMPLETED = "completed"  # успешно завершён
     FAILED = "failed"  # ошибка

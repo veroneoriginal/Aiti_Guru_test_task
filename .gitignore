@@ -1,6 +1,4 @@
 # Игнорировать всё в 00_base
-combined_code.py
-hints.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

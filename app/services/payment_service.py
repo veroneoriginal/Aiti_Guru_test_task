@@ -47,7 +47,7 @@ async def deposit(
         OverpaymentError: сумма превышает остаток по заказу
     """
     # Загрузка заказа из БД, OrderNotFoundError если нет
-    order = await get_order(order_id, session)
+    order = await get_order(order_id, session, lock=True)
 
     # Проверка — если заказ уже полностью оплачен - платёж невозможен
     if order.status == OrderStatus.PAID:
@@ -143,7 +143,7 @@ async def refund(
         )
 
     # 6. Создаём возврат с привязкой к депозиту
-    order = await get_order(original_payment.order_id, session)
+    order = await get_order(original_payment.order_id, session, lock=True)
     refund_payment = Payment(
         order=order,
         type=original_payment.type,

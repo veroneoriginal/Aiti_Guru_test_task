@@ -2,7 +2,7 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from sqlalchemy import (
     CheckConstraint,
@@ -21,10 +21,6 @@ from app.models.base import (
     PaymentType,
     TimestampMixin,
 )
-
-# спасает от циклической зависимости между взаимосвязанными моделями.
-if TYPE_CHECKING:
-    from app.models.order import Order
 
 
 class Payment(TimestampMixin, Base):
@@ -74,7 +70,7 @@ class Payment(TimestampMixin, Base):
         String(20),
         nullable=False,
         default=PaymentStatus.PENDING,
-        comment="Статус: не оплачен / частично оплачен / оплачен",
+        comment="Статус: создан / завершен / ошибка",
     )
     parent_payment_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True),

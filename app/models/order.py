@@ -2,7 +2,6 @@
 
 import uuid
 from decimal import Decimal
-from typing import TYPE_CHECKING
 
 from sqlalchemy import Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
@@ -15,10 +14,6 @@ from app.models.base import (
     PaymentStatus,
     TimestampMixin,
 )
-
-# спасает от циклической зависимости между взаимосвязанными моделями.
-if TYPE_CHECKING:
-    from app.models.payment import Payment
 
 
 class Order(TimestampMixin, Base):

@@ -12,6 +12,7 @@ from app.models.order import Order
 async def get_order(
         order_id: uuid.UUID,
         session: AsyncSession,
+        lock: bool = False,
 ) -> Order:
     """
     Возвращает заказ по ID.
@@ -26,10 +27,15 @@ async def get_order(
     Исключения:
         OrderNotFoundError: заказ не найден
     """
-    result = await session.execute(
-        select(Order).where(Order.id == order_id)
-    )
-    order = result.scalar_one_or_none() # возвращает объект или None, не падает если не нашёл
+    statement = select(Order).where(Order.id == order_id)
+
+    if lock:
+        statement = statement.with_for_update()
+
+    result = await session.execute(statement)
+
+    # возвращает объект или None, не падает если не нашёл
+    order = result.scalar_one_or_none()
 
     if order is None:
         raise OrderNotFoundError(order_id)
