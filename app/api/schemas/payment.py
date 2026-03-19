@@ -40,6 +40,7 @@ class PaymentResponse(BaseModel):
 
     id: uuid.UUID
     order_id: uuid.UUID
+    parent_payment_id: Optional[uuid.UUID]
     type: PaymentType
     operation: PaymentOperation
     amount: Decimal

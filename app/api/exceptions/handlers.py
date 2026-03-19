@@ -1,6 +1,5 @@
 # app/api/exceptions/handlers.py
 # pylint: skip-file
-# app/api/exceptions/handlers.py
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -13,6 +12,8 @@ from app.core.exceptions import (
     OverpaymentError,
     PaymentNotFoundError,
     RefundExceedsDepositError,
+    RefundOnIncompletePaymentError,
+    RefundOnNonDepositError,
 )
 
 
@@ -97,5 +98,26 @@ def register_exception_handlers(app: FastAPI) -> None:
     ) -> JSONResponse:
         return JSONResponse(
             status_code=404,
+            content={"detail": str(exc)},
+        )
+
+
+    @app.exception_handler(RefundOnNonDepositError)
+    async def refund_on_non_deposit_handler(
+            request: Request,
+            exc: RefundOnNonDepositError,
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=400,
+            content={"detail": str(exc)},
+        )
+
+    @app.exception_handler(RefundOnIncompletePaymentError)
+    async def refund_on_incomplete_handler(
+            request: Request,
+            exc: RefundOnIncompletePaymentError,
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=400,
             content={"detail": str(exc)},
         )

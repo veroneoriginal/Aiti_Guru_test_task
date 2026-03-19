@@ -84,6 +84,3 @@ class Order(TimestampMixin, Base):
         Сколько ещё можно заплатить по заказу.
         """
         return self.amount - self.paid_total()
-
-    def __repr__(self) -> str:
-        return f"<Order id={self.id} amount={self.amount} status={self.status}>"

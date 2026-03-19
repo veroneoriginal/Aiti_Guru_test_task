@@ -130,3 +130,17 @@ class BankUnavailableError(BankError):
 
     def __init__(self):
         super().__init__("API банка недоступен.")
+
+
+class RefundOnNonDepositError(AppError):
+    """Попытка возврата по платежу, который не является депозитом."""
+    def __init__(self, payment_id: uuid.UUID):
+        self.payment_id = payment_id
+        super().__init__(f"Платёж {payment_id} не является депозитом.")
+
+
+class RefundOnIncompletePaymentError(AppError):
+    """Попытка возврата по незавершённому платежу."""
+    def __init__(self, payment_id: uuid.UUID):
+        self.payment_id = payment_id
+        super().__init__(f"Платёж {payment_id} не завершён, возврат невозможен.")

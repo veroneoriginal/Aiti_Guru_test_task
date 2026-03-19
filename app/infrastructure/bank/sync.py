@@ -1,9 +1,12 @@
 # app/infrastructure/bank/sync.py
 # Этот модуль — связующее звено между банком и БД.
 # Он не знает ни про HTTP, ни про бизнес-логику — просто координирует
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.bank.client import bank_client
+from app.models.order import Order
 from app.models.payment import Payment
 
 
@@ -36,7 +39,16 @@ async def sync_payment_with_bank(
     )
 
     if bank_status == "success":
+        # Загрузка заказа со всеми платежами для корректного пересчёта
+        result = await session.execute(
+            select(Order)
+            .where(Order.id == payment.order_id)
+            .options(selectinload(Order.payments))
+        )
+        order = result.scalar_one()
+        payment.order = order
         payment.mark_completed()
+
     elif bank_status == "failed":
         payment.mark_failed()
 

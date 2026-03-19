@@ -76,6 +76,12 @@ class Payment(TimestampMixin, Base):
         default=PaymentStatus.PENDING,
         comment="Статус: не оплачен / частично оплачен / оплачен",
     )
+    parent_payment_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("payments.id", ondelete="RESTRICT"),
+        nullable=True,
+        comment="ID исходного депозита (заполняется только для возвратов)",
+    )
 
     # ------------------------------------------------------------------
     # Поля эквайринга (nullable — заполняются только для type=acquiring)

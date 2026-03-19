@@ -97,6 +97,7 @@ pytest tests/ -v
 │       │   └── sync.py              # Синхронизация статуса с банком
 │       └── db/
 │           └── session.py           # Движок и сессия SQLAlchemy
+│           └── schema.sql           # Схема БД
 └── tests/
     ├── conftest.py                  # Фикстуры (in-memory SQLite)
     └── test_payment_service.py      # Тесты платёжного сервиса

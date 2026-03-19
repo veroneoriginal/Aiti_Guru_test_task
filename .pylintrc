@@ -9,6 +9,7 @@ disable=
     E1101, # Dynamic attributes
     E1102, # not-callable
     E1123, # Unexpected keyword argument
+    E1136, # Unsubscriptable-object
     C0103, # Pylint doesn't like id attribute
     C0114, # Missing module docstring
     C0115, # Class docstring
@@ -17,3 +18,5 @@ disable=
     W0201, # Attribute defined outside init method
     W0223, # Methods 'create' and 'update' is abstract in class 'BaseSerializer' but is not overridden in child class
     W0511, # Used when a warning note
+    W0613, # Unused-argument
+    W0718, # broad-exception-caught
