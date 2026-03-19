@@ -88,6 +88,7 @@ async def deposit(
 
     # Отметить объект как изменённый
     session.add(payment)
+    session.add(order)
     # Фиксация транзакции в БД
     await session.commit()
     # Обновляем объект в БД
@@ -161,6 +162,8 @@ async def refund(
         refund_payment.bank_payment_id = bank_payment_id
 
     session.add(refund_payment)
+    order = await get_order(original_payment.order_id, session)
+    session.add(order)
     await session.commit()
     await session.refresh(refund_payment)
     return refund_payment

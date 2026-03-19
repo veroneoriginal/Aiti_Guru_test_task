@@ -23,6 +23,7 @@ from app.core.exceptions import (
     OverpaymentError,
     PaymentNotFoundError,
     RefundExceedsDepositError,
+    RefundOnNonDepositError,
 )
 from app.models.base import OrderStatus, PaymentOperation, PaymentStatus, PaymentType
 from app.models.order import Order
@@ -246,5 +247,48 @@ class TestRefundErrors:
             await refund(
                 payment_id=payment.id,
                 amount=Decimal("999.00"),
+                session=session,
+            )
+
+    @pytest.mark.asyncio
+    async def test_refund_on_refund(self, session: AsyncSession, order: Order):
+        """Возврат по возврату — RefundOnNonDepositError."""
+        payment = await deposit(
+            order_id=order.id,
+            amount=Decimal("500.00"),
+            payment_type=PaymentType.CASH,
+            session=session,
+        )
+        refund_payment = await refund(
+            payment_id=payment.id,
+            amount=Decimal("200.00"),
+            session=session,
+        )
+        with pytest.raises(RefundOnNonDepositError):
+            await refund(
+                payment_id=refund_payment.id,
+                amount=Decimal("100.00"),
+                session=session,
+            )
+
+    @pytest.mark.asyncio
+    async def test_refund_exceeds_single_deposit(self, session: AsyncSession, order: Order):
+        """Возврат больше суммы конкретного депозита."""
+        small = await deposit(
+            order_id=order.id,
+            amount=Decimal("300.00"),
+            payment_type=PaymentType.CASH,
+            session=session,
+        )
+        await deposit(
+            order_id=order.id,
+            amount=Decimal("700.00"),
+            payment_type=PaymentType.CASH,
+            session=session,
+        )
+        with pytest.raises(RefundExceedsDepositError):
+            await refund(
+                payment_id=small.id,
+                amount=Decimal("500.00"),
                 session=session,
             )

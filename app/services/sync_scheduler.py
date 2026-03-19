@@ -4,7 +4,6 @@ import logging
 
 from sqlalchemy import select
 
-from app.core.exceptions import BankPaymentNotFoundError, BankUnavailableError
 from app.infrastructure.bank.sync import sync_payment_with_bank
 from app.infrastructure.db.session import AsyncSessionFactory
 from app.models.base import PaymentStatus, PaymentType

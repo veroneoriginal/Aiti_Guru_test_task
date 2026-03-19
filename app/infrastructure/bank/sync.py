@@ -2,8 +2,8 @@
 # Этот модуль — связующее звено между банком и БД.
 # Он не знает ни про HTTP, ни про бизнес-логику — просто координирует
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.infrastructure.bank.client import bank_client
 from app.models.order import Order
